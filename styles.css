@@ -320,10 +320,50 @@ h3 {
   position: relative;
   min-height: calc(100vh - 64px);
   overflow: hidden;
-  background:
-    linear-gradient(90deg, rgba(7, 8, 11, 0.96), rgba(7, 8, 11, 0.82) 48%, rgba(7, 8, 11, 0.94)),
-    linear-gradient(0deg, rgba(7, 8, 11, 0.98), rgba(7, 8, 11, 0.72)),
-    url("assets/galactic-archive-hero.png") center / cover no-repeat;
+  background-color: #050608;
+  background-image:
+    linear-gradient(180deg, rgba(7, 8, 11, 0.08), rgba(7, 8, 11, 0.2) 34%, rgba(7, 8, 11, 0.95) 100%),
+    linear-gradient(90deg, rgba(7, 8, 11, 0.94) 0%, rgba(7, 8, 11, 0.7) 36%, rgba(7, 8, 11, 0.18) 72%, rgba(7, 8, 11, 0.06) 100%),
+    var(--page-hero-image, url("assets/galactic-archive-hero.png"));
+  background-position:
+    center top,
+    center top,
+    var(--page-hero-position, center top);
+  background-repeat: no-repeat;
+  background-size:
+    100% 920px,
+    100% 920px,
+    max(100%, 1180px) auto;
+}
+
+.page-eras {
+  --page-hero-image: url("assets/page-eras-hero.png");
+  --page-hero-position: center top;
+}
+
+.page-lore {
+  --page-hero-image: url("assets/page-lore-hero.png");
+  --page-hero-position: center top;
+}
+
+.page-media {
+  --page-hero-image: url("assets/page-media-hero.png");
+  --page-hero-position: center top;
+}
+
+.page-arsenal {
+  --page-hero-image: url("assets/page-arsenal-hero.png");
+  --page-hero-position: center top;
+}
+
+.page-characters {
+  --page-hero-image: url("assets/page-characters-hero.png");
+  --page-hero-position: center top;
+}
+
+.page-worlds {
+  --page-hero-image: url("assets/page-worlds-hero.png");
+  --page-hero-position: center top;
 }
 
 .page-intro h1 {

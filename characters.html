@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Character Atlas | Star Wars Galactic Archive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="Star Wars Galactic Archive home">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span>Galactic Archive</span>
+    </a>
+    <nav class="nav" aria-label="Main navigation">
+      <a href="eras.html">Eras</a>
+      <a href="lore.html">Lore</a>
+      <a href="media.html">Media</a>
+      <a href="arsenal.html">Ships &amp; Sabers</a>
+      <a href="characters.html" aria-current="page">Characters</a>
+      <a href="worlds.html">Worlds</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="section page-intro" aria-labelledby="characters-title">
+      <div class="section-heading">
+        <p class="eyebrow">Dossiers</p>
+        <h1 id="characters-title">Character Atlas</h1>
+      </div>
+      <p class="section-note">The atlas opens with the main saga figures so it stays readable. Use the archive menu to expand into 275 characters across the films, animated series, live-action series, games, and High Republic stories.</p>
+      <div class="controls" aria-label="Character filters">
+        <label>
+          <span>Archive</span>
+          <select id="character-scope">
+            <option value="featured">Featured main characters</option>
+            <option value="all">Full 275-person archive</option>
+          </select>
+        </label>
+        <label>
+          <span>Search</span>
+          <input id="character-search" type="search" placeholder="Name, faction, era, relationship">
+        </label>
+        <label>
+          <span>Faction</span>
+          <select id="faction-filter">
+            <option value="all">All factions</option>
+          </select>
+        </label>
+      </div>
+      <div class="character-count" id="character-count" aria-live="polite"></div>
+      <div class="character-grid" id="character-grid"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>This is an original, unofficial educational fan site. Star Wars names and story elements belong to their respective rights holders.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

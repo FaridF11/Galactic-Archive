@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ships and Sabers | Star Wars Galactic Archive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="Star Wars Galactic Archive home">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span>Galactic Archive</span>
+    </a>
+    <nav class="nav" aria-label="Main navigation">
+      <a href="eras.html">Eras</a>
+      <a href="lore.html">Lore</a>
+      <a href="media.html">Media</a>
+      <a href="arsenal.html" aria-current="page">Ships &amp; Sabers</a>
+      <a href="characters.html">Characters</a>
+      <a href="worlds.html">Worlds</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="section page-intro" aria-labelledby="arsenal-title">
+      <div class="section-heading">
+        <p class="eyebrow">Ships, sabers, and superweapons</p>
+        <h1 id="arsenal-title">Galactic Arsenal</h1>
+      </div>
+      <p class="section-note">The Death Star is included here, along with the second Death Star, major starfighters, capital ships, walkers, speeders, signature sabers, kyber weapons, and other important craft from the movies and series.</p>
+      <div class="controls gear-controls" aria-label="Arsenal filters">
+        <label>
+          <span>Type</span>
+          <select id="gear-type-filter">
+            <option value="all">All ships and weapons</option>
+          </select>
+        </label>
+        <label>
+          <span>Search</span>
+          <input id="gear-search" type="search" placeholder="Ship, saber, faction, era">
+        </label>
+      </div>
+      <div class="character-count" id="gear-count" aria-live="polite"></div>
+      <div class="gear-grid" id="gear-grid"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>This is an original, unofficial educational fan site. Star Wars names and story elements belong to their respective rights holders.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

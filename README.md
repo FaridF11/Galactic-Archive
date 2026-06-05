@@ -27,6 +27,10 @@ The goal of this project is to create a simple but useful Star Wars encyclopedia
 
 This is a fan-made project and is not officially connected to Star Wars, Lucasfilm, or Disney. All Star Wars names, characters, and related content belong to their original owners.
 
+## Project Status
+
+This project is still a work in progress. Some sections may need more information, design improvements, and extra features.
+
 ## Author
 
 Created by Farid Feghali.

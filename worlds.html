@@ -33,6 +33,66 @@
       </div>
       <p class="page-lede">A navigable atlas of major Star Wars planets, moons, stations, hyperspace regions, and strange frontiers. Use the filters to jump from the Core to the Outer Rim, then into the places the Republic never fully mapped.</p>
 
+      <div class="archive-heading">
+        <div>
+          <p class="eyebrow">Complete atlas</p>
+          <h2>All Worlds Archive</h2>
+        </div>
+        <p>Every card below is searchable and filterable by region or type, so the worlds are visible first instead of hidden under the Unknown Regions explanation.</p>
+      </div>
+
+      <div class="controls world-controls" aria-label="World archive filters">
+        <label>
+          Region
+          <select id="world-region-filter">
+            <option value="all">All regions</option>
+          </select>
+        </label>
+        <label>
+          Type
+          <select id="world-type-filter">
+            <option value="all">All types</option>
+          </select>
+        </label>
+        <label>
+          Search
+          <input id="world-search" type="search" placeholder="Search worlds, regions, stories, or details">
+        </label>
+      </div>
+      <p id="world-count" class="character-count" aria-live="polite">Loading the full world archive...</p>
+      <div id="world-grid" class="world-grid" aria-live="polite">
+        <article class="world-card">
+          <div>
+            <h3>Coruscant</h3>
+            <div class="character-meta">
+              <span class="pill">Core Worlds</span>
+              <span class="pill">Planet</span>
+            </div>
+          </div>
+          <p>City-covered galactic capital, Senate seat, Jedi Temple home, and a symbol of civilization layered over inequality and political decay.</p>
+        </article>
+        <article class="world-card">
+          <div>
+            <h3>Tatooine</h3>
+            <div class="character-meta">
+              <span class="pill">Outer Rim</span>
+              <span class="pill">Planet</span>
+            </div>
+          </div>
+          <p>Desert world shaped by moisture farming, Tusken tribes, Jawas, smugglers, Hutt influence, and Skywalker beginnings.</p>
+        </article>
+        <article class="world-card">
+          <div>
+            <h3>Exegol</h3>
+            <div class="character-meta">
+              <span class="pill">Unknown Regions</span>
+              <span class="pill">Planet</span>
+            </div>
+          </div>
+          <p>Hidden Sith world where Palpatine, the Sith Eternal, and the Final Order prepare a secret return.</p>
+        </article>
+      </div>
+
       <article class="unknown-region-panel">
         <div>
           <p class="eyebrow">Hidden space</p>
@@ -54,27 +114,6 @@
           </div>
         </dl>
       </article>
-
-      <div class="controls world-controls" aria-label="World archive filters">
-        <label>
-          Region
-          <select id="world-region-filter">
-            <option value="all">All regions</option>
-          </select>
-        </label>
-        <label>
-          Type
-          <select id="world-type-filter">
-            <option value="all">All types</option>
-          </select>
-        </label>
-        <label>
-          Search
-          <input id="world-search" type="search" placeholder="Search worlds, regions, stories, or details">
-        </label>
-      </div>
-      <p id="world-count" class="character-count" aria-live="polite"></p>
-      <div id="world-grid" class="world-grid" aria-live="polite"></div>
     </section>
   </main>
 

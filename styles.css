@@ -336,6 +336,30 @@ h3 {
     max(100%, 1180px) auto;
 }
 
+.page-scene {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 0;
+  width: 100%;
+  height: min(920px, 100vh);
+  object-fit: cover;
+  object-position: center top;
+  filter: saturate(1.16) contrast(1.06) brightness(0.96);
+}
+
+.page-intro::before {
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(7, 8, 11, 0.06), rgba(7, 8, 11, 0.2) 36%, rgba(7, 8, 11, 0.95) 100%),
+    linear-gradient(90deg, rgba(7, 8, 11, 0.94) 0%, rgba(7, 8, 11, 0.7) 36%, rgba(7, 8, 11, 0.18) 72%, rgba(7, 8, 11, 0.06) 100%),
+    linear-gradient(90deg, rgba(245, 182, 66, 0.12) 0 1px, transparent 1px),
+    linear-gradient(0deg, rgba(245, 240, 232, 0.045) 0 1px, transparent 1px);
+  background-size: 100% min(920px, 100vh), 100% min(920px, 100vh), 72px 72px, 72px 72px;
+  background-repeat: no-repeat, no-repeat, repeat, repeat;
+  mask-image: none;
+  opacity: 1;
+}
+
 .page-eras {
   --page-hero-image: url("assets/page-eras-hero.png");
   --page-hero-position: center top;
@@ -372,9 +396,9 @@ h3 {
   line-height: 0.94;
 }
 
-.page-intro > * {
+.page-intro > *:not(.page-scene) {
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 .band {
@@ -1267,6 +1291,7 @@ body.profile-open {
 }
 
 .profile-portrait-card,
+.profile-image-card,
 .profile-facts,
 .profile-section,
 .profile-jump-list {
@@ -1281,6 +1306,93 @@ body.profile-open {
 .profile-portrait-card {
   overflow: hidden;
   padding: 16px;
+}
+
+.profile-image-card {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  min-height: 320px;
+  margin: 0;
+  place-items: stretch;
+}
+
+.profile-image-card img {
+  position: relative;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  height: 320px;
+  object-fit: cover;
+  object-position: center top;
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.profile-image-card.has-image img {
+  opacity: 1;
+}
+
+.profile-image-placeholder {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  background:
+    linear-gradient(145deg, rgba(77, 182, 172, 0.18), rgba(95, 143, 214, 0.12)),
+    radial-gradient(circle at 50% 36%, rgba(77, 182, 172, 0.36), transparent 42%),
+    rgba(7, 8, 11, 0.6);
+}
+
+.profile-mini-character {
+  width: 150px;
+  height: 230px;
+  opacity: 0.96;
+  transform: scale(1.04);
+  filter:
+    drop-shadow(0 0 18px rgba(77, 182, 172, 0.74))
+    drop-shadow(0 0 34px rgba(95, 143, 214, 0.3));
+}
+
+.profile-image-placeholder > span {
+  position: absolute;
+  right: 18px;
+  bottom: 52px;
+  z-index: 8;
+  display: grid;
+  place-items: center;
+  width: 62px;
+  height: 62px;
+  border: 1px solid rgba(77, 182, 172, 0.44);
+  border-radius: 50%;
+  color: var(--text);
+  background: rgba(7, 8, 11, 0.58);
+  font-size: 1.05rem;
+  font-weight: 900;
+  box-shadow:
+    inset 0 0 30px rgba(77, 182, 172, 0.22),
+    0 0 36px rgba(77, 182, 172, 0.24);
+}
+
+.profile-image-card figcaption {
+  position: relative;
+  z-index: 3;
+  margin: 0;
+  padding: 10px 12px;
+  border-top: 1px solid rgba(245, 240, 232, 0.12);
+  background: rgba(7, 8, 11, 0.86);
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.profile-image-card.has-error {
+  min-height: 220px;
+}
+
+.profile-image-card.has-error img {
+  display: none;
 }
 
 .profile-portrait-card .eyebrow {

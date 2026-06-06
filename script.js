@@ -1006,6 +1006,7 @@ const worldSearchInput = document.querySelector("#world-search");
 const worldGrid = document.querySelector("#world-grid");
 const worldCount = document.querySelector("#world-count");
 let characterProfile = null;
+let profilePortraitToken = 0;
 
 function uniqueFactions() {
   return [...new Set(characters.map((character) => character.faction))].sort();
@@ -1172,6 +1173,25 @@ function buildCharacterProfile() {
       <button class="profile-close" type="button" aria-label="Close character profile">Close</button>
       <div class="profile-dossier">
         <aside class="profile-infobox" aria-label="Character quick facts">
+          <figure class="profile-image-card" id="profile-image-card">
+            <div class="profile-image-placeholder">
+              <div class="holo-character profile-mini-character" aria-hidden="true">
+                <span class="holo-cape"></span>
+                <span class="holo-head"></span>
+                <span class="holo-helmet"></span>
+                <span class="holo-ear left"></span>
+                <span class="holo-ear right"></span>
+                <span class="holo-body"></span>
+                <span class="holo-chest"></span>
+                <span class="holo-arm left"></span>
+                <span class="holo-arm right"></span>
+                <span class="holo-weapon"></span>
+              </div>
+              <span id="profile-image-initials"></span>
+            </div>
+            <img id="profile-image" alt="">
+            <figcaption id="profile-image-caption">Local databank-style portrait. External thumbnail loads when available.</figcaption>
+          </figure>
           <div class="profile-portrait-card">
             <p class="eyebrow">Hologram portrait</p>
             <div class="hologram-stage" aria-hidden="true">
@@ -1296,6 +1316,123 @@ function characterSourceLinks(character) {
   `;
 }
 
+function characterLookupTitle(character) {
+  const aliases = {
+    "Anakin Skywalker / Darth Vader": "Anakin Skywalker",
+    "Din Djarin / The Mandalorian": "Din Djarin",
+    "Grogu / The Child": "Grogu",
+    "Ben Solo / Kylo Ren": "Ben Solo",
+    "Sheev Palpatine / Darth Sidious": "Darth Sidious",
+    "CT-7567 Rex": "Rex",
+    "CC-2224 Cody": "Cody",
+    "FN-2187 / Finn": "Finn",
+    "Krrsantan": "Black Krrsantan"
+  };
+
+  return aliases[character.name] || character.name.split("/")[0].trim();
+}
+
+function resetCharacterImage(character) {
+  const card = characterProfile.querySelector("#profile-image-card");
+  const image = characterProfile.querySelector("#profile-image");
+  const initials = characterProfile.querySelector("#profile-image-initials");
+  const caption = characterProfile.querySelector("#profile-image-caption");
+
+  card.classList.remove("has-image", "has-error");
+  card.classList.remove("visual-jedi", "visual-sith", "visual-mandalorian", "visual-trooper", "visual-droid", "visual-wookiee", "visual-rebel", "visual-civilian", "visual-scoundrel");
+  card.classList.add(characterVisualClass(character));
+  image.removeAttribute("src");
+  image.alt = "";
+  initials.textContent = characterInitials(character.name);
+  caption.textContent = "Local databank-style portrait. External thumbnail loads when available.";
+}
+
+function fetchFandomThumbnail(title) {
+  return new Promise((resolve, reject) => {
+    const callbackName = `fandomPortrait${Date.now()}${Math.floor(Math.random() * 100000)}`;
+    const script = document.createElement("script");
+    const timeout = window.setTimeout(() => {
+      cleanup();
+      reject(new Error("Wookieepedia image request timed out"));
+    }, 12000);
+
+    function cleanup() {
+      window.clearTimeout(timeout);
+      delete window[callbackName];
+      script.remove();
+    }
+
+    window[callbackName] = (data) => {
+      cleanup();
+      const page = data && data.query && Object.values(data.query.pages)[0];
+      const thumbnail = page && page.thumbnail && page.thumbnail.source;
+
+      if (!thumbnail) {
+        reject(new Error("No thumbnail returned"));
+        return;
+      }
+
+      resolve(thumbnail);
+    };
+
+    script.onerror = () => {
+      cleanup();
+      reject(new Error("Wookieepedia image request failed"));
+    };
+    script.src = `https://starwars.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=640&titles=${encodeURIComponent(title)}&callback=${callbackName}`;
+    document.body.append(script);
+  });
+}
+
+async function loadCharacterImage(character) {
+  const token = ++profilePortraitToken;
+  const card = characterProfile.querySelector("#profile-image-card");
+  const image = characterProfile.querySelector("#profile-image");
+  const caption = characterProfile.querySelector("#profile-image-caption");
+  const title = characterLookupTitle(character);
+
+  resetCharacterImage(character);
+
+  try {
+    const thumbnail = await fetchFandomThumbnail(title);
+
+    if (token !== profilePortraitToken) {
+      return;
+    }
+
+    if (!thumbnail) {
+      throw new Error("No thumbnail returned");
+    }
+
+    image.onload = () => {
+      if (token !== profilePortraitToken) {
+        return;
+      }
+
+      card.classList.add("has-image");
+      caption.textContent = `Image source: Wookieepedia thumbnail for ${title}`;
+    };
+    image.onerror = () => {
+      if (token !== profilePortraitToken) {
+        return;
+      }
+
+      card.classList.add("has-error");
+      caption.textContent = "External image unavailable; showing local portrait.";
+    };
+    image.alt = `${character.name} reference portrait`;
+    image.referrerPolicy = "no-referrer";
+    image.src = thumbnail;
+  } catch (error) {
+    if (token !== profilePortraitToken) {
+      return;
+    }
+
+    card.classList.add("has-error");
+    caption.textContent = "External image unavailable; showing local portrait.";
+  }
+}
+
 function characterSkillsSummary(character) {
   const text = `${character.name} ${character.faction} ${character.role} ${character.significance}`.toLowerCase();
 
@@ -1335,6 +1472,7 @@ function openCharacterProfile(characterIndex) {
   }
 
   setText("#profile-initials", characterInitials(character.name));
+  setText("#profile-image-initials", characterInitials(character.name));
   setText("#profile-type", character.tier === "featured" ? "Main character dossier" : "Archive character dossier");
   setText("#profile-name", character.name);
   setText("#profile-role", character.role);
@@ -1354,6 +1492,7 @@ function openCharacterProfile(characterIndex) {
     <span class="pill">${character.tier === "featured" ? "Main dossier" : "Archive dossier"}</span>
   `;
   characterProfile.querySelector("#profile-source-links").innerHTML = characterSourceLinks(character);
+  loadCharacterImage(character);
 
   const hologram = characterProfile.querySelector("#profile-hologram");
   hologram.className = `hologram-avatar ${characterVisualClass(character)}`;

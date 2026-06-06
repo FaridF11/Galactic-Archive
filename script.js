@@ -1332,6 +1332,26 @@ function characterLookupTitle(character) {
   return aliases[character.name] || character.name.split("/")[0].trim();
 }
 
+function characterImageSearchTerm(character) {
+  const firstAppearanceSearches = {
+    "Obi-Wan Kenobi": "Obi-Wan Kenobi The Phantom Menace",
+    "Anakin Skywalker / Darth Vader": "Anakin Skywalker The Phantom Menace",
+    "Padme Amidala": "Padme Amidala The Phantom Menace",
+    "Yoda": "Yoda The Empire Strikes Back",
+    "Boba Fett": "Boba Fett The Empire Strikes Back",
+    "Ahsoka Tano": "Ahsoka Tano The Clone Wars",
+    "Bo-Katan Kryze": "Bo-Katan Kryze The Clone Wars",
+    "Saw Gerrera": "Saw Gerrera The Clone Wars",
+    "Mon Mothma": "Mon Mothma Return of the Jedi",
+    "Lando Calrissian": "Lando Calrissian The Empire Strikes Back",
+    "Ben Solo / Kylo Ren": "Kylo Ren The Force Awakens",
+    "Din Djarin / The Mandalorian": "Din Djarin The Mandalorian",
+    "Grogu / The Child": "Grogu The Mandalorian"
+  };
+
+  return firstAppearanceSearches[character.name] || characterLookupTitle(character);
+}
+
 function resetCharacterImage(character) {
   const card = characterProfile.querySelector("#profile-image-card");
   const image = characterProfile.querySelector("#profile-image");
@@ -1384,6 +1404,47 @@ function fetchFandomThumbnail(title) {
   });
 }
 
+function fetchFandomSearchTitle(searchTerm) {
+  return new Promise((resolve, reject) => {
+    const callbackName = `fandomSearch${Date.now()}${Math.floor(Math.random() * 100000)}`;
+    const script = document.createElement("script");
+    const timeout = window.setTimeout(() => {
+      cleanup();
+      reject(new Error("Wookieepedia search timed out"));
+    }, 12000);
+
+    function cleanup() {
+      window.clearTimeout(timeout);
+      delete window[callbackName];
+      script.remove();
+    }
+
+    window[callbackName] = (data) => {
+      cleanup();
+      const titles = data && data[1];
+
+      if (!titles || !titles.length) {
+        reject(new Error("No Wookieepedia page found"));
+        return;
+      }
+
+      const baseName = searchTerm.split(" The ")[0].trim().toLowerCase();
+      const bestTitle = titles.find((title) => title.toLowerCase() === baseName)
+        || titles.find((title) => title.toLowerCase().startsWith(baseName))
+        || titles[0];
+
+      resolve(bestTitle);
+    };
+
+    script.onerror = () => {
+      cleanup();
+      reject(new Error("Wookieepedia search failed"));
+    };
+    script.src = `https://starwars.fandom.com/api.php?action=opensearch&format=json&limit=8&search=${encodeURIComponent(searchTerm)}&callback=${callbackName}`;
+    document.body.append(script);
+  });
+}
+
 async function loadCharacterImage(character) {
   const token = ++profilePortraitToken;
   const card = characterProfile.querySelector("#profile-image-card");
@@ -1393,8 +1454,35 @@ async function loadCharacterImage(character) {
 
   resetCharacterImage(character);
 
+  const mappedImage = window.characterImageMap && window.characterImageMap[character.name];
+
+  if (mappedImage && mappedImage.url) {
+    image.onload = () => {
+      if (token !== profilePortraitToken) {
+        return;
+      }
+
+      card.classList.add("has-image");
+      caption.textContent = `Image source: Wookieepedia thumbnail for ${mappedImage.title || character.name}`;
+    };
+    image.onerror = () => {
+      if (token !== profilePortraitToken) {
+        return;
+      }
+
+      card.classList.add("has-error");
+      caption.textContent = "External image unavailable; showing local portrait.";
+    };
+    image.alt = `${character.name} reference portrait`;
+    image.removeAttribute("referrerpolicy");
+    image.src = mappedImage.url;
+    return;
+  }
+
   try {
-    const thumbnail = await fetchFandomThumbnail(title);
+    const searchTerm = characterImageSearchTerm(character);
+    const resolvedTitle = await fetchFandomSearchTitle(searchTerm).catch(() => title);
+    const thumbnail = await fetchFandomThumbnail(resolvedTitle);
 
     if (token !== profilePortraitToken) {
       return;
@@ -1410,7 +1498,7 @@ async function loadCharacterImage(character) {
       }
 
       card.classList.add("has-image");
-      caption.textContent = `Image source: Wookieepedia thumbnail for ${title}`;
+      caption.textContent = `Image source: Wookieepedia thumbnail for ${resolvedTitle}`;
     };
     image.onerror = () => {
       if (token !== profilePortraitToken) {
@@ -1421,7 +1509,7 @@ async function loadCharacterImage(character) {
       caption.textContent = "External image unavailable; showing local portrait.";
     };
     image.alt = `${character.name} reference portrait`;
-    image.referrerPolicy = "no-referrer";
+    image.removeAttribute("referrerpolicy");
     image.src = thumbnail;
   } catch (error) {
     if (token !== profilePortraitToken) {
